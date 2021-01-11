@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+
+{% block title %}
+    Selama Datang {{user}}
+{% endblock title %}
+
+
+{% block content %}
+
+{% for voting in voting_list %}
+    <!-- PANEL HEADLINE -->
+    <div class="panel panel-headline">
+        <div class="panel-heading">
+            <h3 class="panel-title">{{voting.nama}} (suara masuk={{voting.suaramasuk}})</h3>
+        </div>
+        <div class="panel-body">
+            <div class="row">
+                {% for grup in voting.grup %}
+                    <div class="col-md-6">
+                        <div class="panel">
+                            <div class="panel-body">
+                                <div id="ctr-{{grup.nama|slugify}}" class="ct-chart"></div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <!-- END PANEL HEADLINE -->
+{% endfor %}
+    
+
+{% endblock content %}
+
+
+{% block script %}
+<script src="https://code.highcharts.com/highcharts.js"></script>
+
+{% for voting in voting_list %}
+    
+    {% for grup in voting.grup %}
+    <script>
+        Highcharts.chart('ctr-{{grup.nama|slugify}}', {
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'Hasil Vote'
+        },
+        subtitle: {
+            text: '{{grup.nama}}'
+        },
+        xAxis: {
+            type: 'category',
+            crosshair: true
+        },
+        yAxis: {
+            min: 0,
+            title: {
+                text: 'Total (suara)'
+            }
+        },
+        legend: {
+            enabled: false
+        },
+        plotOptions: {
+            series: {
+                borderWidth: 0,
+                dataLabels: {
+                    enabled: true,
+                    // format: '{point.y:.1f}%'
+                }
+            }
+        },
+
+        tooltip: {
+            headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+            pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b> Suara<br/>'
+        },
+        series: [{
+            
+            
+            name: "Total",
+            data: [
+                {% for kandidat in grup.kandidat %}
+                {
+                    name: "{{kandidat.nama}}",
+                    y: {{kandidat.suara}},
+                },
+                {% endfor %}
+                ],
+        }]
+    });
+    </script>
+    
+    {% endfor %}
+        
+{% endfor %}
+    
+{% endblock script %}
+    
+    
+    

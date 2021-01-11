@@ -1,0 +1,63 @@
+{% extends 'voting/master.html' %}
+{% load static %}
+
+{% block title %}
+	E-Voting {{voting.namavoting}}
+{% endblock title %}
+
+{% block content %}
+	<!-- WRAPPER -->
+	<div id="wrapper">
+		<div class="vertical-align-wrap">
+			<div class="vertical-align-middle">
+				<div class="auth-box ">
+					<div class="left">
+						<div class="content">
+							<div class="header">
+								<div class="logo text-center"><img src="{% static 'klorofil/assets/img/logo-dark.png' %}" alt="Klorofil Logo"></div>
+								<p class="lead">{{voting.namavoting}}</p>
+								{% for message in messages %}
+									{% if message.tags == 'error' %}
+									<div class="alert alert-danger alert-dismissible" role="alert">
+										<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+										<i class="fa fa-check-warning"></i> {{message}}
+									</div>
+									{% endif %}
+								{% endfor %}
+							</div>
+							
+							{% if umum is True %}
+								<a class="btn btn-primary btn-lg btn-block" href="">Start Voting</a>
+							{% else %}
+							<form class="form-auth-small" method="POST">
+								{% csrf_token %}
+								<div class="form-group">
+									<label for="id_token" class="control-label sr-only">Token</label>
+									<input type="text" class="form-control" name="token" id="id_token" placeholder="Input token here">
+								</div>
+								<button type="submit" name="startvoting" class="btn btn-primary btn-lg btn-block">Start Voting</button>
+							</form>
+	
+							{% endif %}
+								
+						</div>
+					</div>
+					<div class="right">
+						<div class="overlay"></div>
+						<div class="content text">
+							<h1 class="heading">E - Voting</h1>
+							<h3>{{voting.namavoting}}</h3>
+							<p>{{voting.deskripsi}}</p>
+						</div>
+					</div>
+					<div class="clearfix"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- END WRAPPER -->
+
+
+{% endblock content %}
+	
+	

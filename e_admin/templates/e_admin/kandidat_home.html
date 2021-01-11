@@ -1,0 +1,268 @@
+{% extends 'base.html' %}
+
+
+{% block title %}
+    List
+{% endblock title %}
+    
+
+
+{% block content %}
+    <div class="panel panel-headline">
+        <div class="panel-heading">
+            <h3 class="panel-title">Selamat Datang {{user}}</h3>
+            <!-- <p class="panel-subtitle">Period: Oct 14, 2016 - Oct 21, 2016</p> -->
+            <div class="right">
+                <button type="button" class="btn-toggle-collapse"><i class="lnr lnr-chevron-up"></i></button>
+            </div>
+        </div>
+        <div class="panel-body">
+            {% for message in messages %}
+                {% if message.tags == 'success' %}
+                <div class="alert alert-success alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <i class="fa fa-check-circle"></i> Your settings have been succesfully saved
+                </div>
+                {% endif %}
+            {% endfor %}
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createmodal">
+                <i class="fa fa-plus-square"></i>Tambah grup
+            </button>
+                
+            <!-- Modal -->
+            <div class="modal fade" id="createmodal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-scrollable">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Tambah</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <!-- TABBED CONTENT -->
+                            <div class="custom-tabs-line tabs-line-bottom left-aligned">
+                                <ul class="nav" role="tablist">
+                                    <li class="active"><a href="#tab-create1" role="tab" data-toggle="tab">Voting</a></li>
+                                    <li><a href="#tab-create2" role="tab" data-toggle="tab">Grup</a></li>
+                                    <li><a href="#tab-create3" role="tab" data-toggle="tab">Kandidat</a></li>
+                                </ul>
+                            </div>
+                            <div class="tab-content">
+                                <div class="tab-pane fade in active" id="tab-create1">
+                                    <form method="post">
+                                        {% csrf_token %}
+                                        <div class="form-group">
+                                            <label for="{{formvoting.namavoting.id_for_label}}">Nama Voting</label>
+                                            <input type="text" class="form-control" name="{{formvoting.namavoting.name}}" maxlength="{{formvoting.namavoting.max}}" 
+                                            id="{{formgrup.namavoting.id_for_label}}" required placeholder="Masukan namavoting">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="{{formvoting.deskripsi.id_for_label}}">{{formvoting.deskripsi.label}}</label>
+                                            <textarea name="{{formvoting.deskripsi.name}}" id="{{formvoting.deskripsi.id_for_label}}" class="form-control" rows="3"></textarea>
+                                        </div>
+                                        <input type="hidden" name="{{formvoting.user.name}}" value="{{user.id}}">
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                            <button type="submit" name="createvoting" class="btn btn-primary">Save changes</button>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="tab-pane fade" id="tab-create2">
+                                    <form method="post">
+                                        {% csrf_token %}
+                                        <div class="form-group">
+                                            <label for="{{formgrup.group_name.id_for_label}}">{{formgrup.group_name.label}}</label>
+                                            <input type="text" class="form-control" name="{{formgrup.group_name.name}}" maxlength="{{formgrup.group_name.max}}" 
+                                            id="{{formgrup.group_name.id_for_label}}" required placeholder="Masukan group_name">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="{{formgrup.voting.id_for_label}}">{{formgrup.voting.label}}</label>
+                                            <select class="form-control" name="{{formgrup.voting.name}}">
+                                                {% for voting in voting_list %}
+                                                <option value="{{voting.id}}">{{voting.namavoting}}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                            <button type="submit" name="creategrup" class="btn btn-primary">Save changes</button>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="tab-pane fade" id="tab-create3">
+                                    <form method="post" enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        <div class="form-group">
+                                            <label for="{{formkandidat.foto.id_for_label}}">{{formkandidat.foto.label}}</label>
+                                            <input required type="file" class="form-control" name="{{formkandidat.foto.name}}" accept="image/" id="{{formkandidat.foto.id_for_label}}">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="{{formkandidat.nama.id_for_label}}">{{formkandidat.nama.label}}</label>
+                                            <input required type="text" class="form-control" name="{{formkandidat.nama.name}}" maxlength="{{formkandidat.nama.max}}" 
+                                            id="{{formkandidat.nama.id_for_label}}" required placeholder="Masukan nama">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="{{formkandidat.deskripsi.id_for_label}}">{{formkandidat.deskripsi.label}}</label>
+                                            <textarea required name="{{formkandidat.deskripsi.name}}" class="form-control" id="{{formkandidat.deskripsi.id_for_label}}" rows="3"></textarea>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="{{formkandidat.grup.id_for_label}}">{{formkandidat.grup.label}}</label>
+                                            <select required class="form-control" name="{{formkandidat.grup.name}}">
+                                                {% for grup in grup_list %}
+                                                <option value="{{grup.id}}">{{grup.group_name}}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                            <button type="submit" name="createkandidat" class="btn btn-primary">Save changes</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <!-- END TABBED CONTENT -->
+                        </div>
+                        <!-- <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary">Save changes</button>
+                        </div> -->
+                    </div>
+                </div>
+            </div>
+            <!-- End Modal -->
+        </div>
+    </div>
+
+    
+    {% for voting in voting_list %}
+        <!-- PANEL HEADLINE -->
+			<div class="panel panel-headline">
+				<div class="panel-heading">
+                    <h3 class="panel-title">{{voting.namavoting}}</h3>
+                    <p>{{voting.deskripsi}}</p> 
+                    <p><a target="blank" href="{% url 'votinglogin' voting.slug %}">{{request.get_host}}{% url 'votinglogin' voting.slug %}</a>
+                    <!-- Button trigger modal -->
+                    <a class="btn btn-secondary" data-toggle="modal" data-target="#manageModal{{voting.id}}">
+                        Manage
+                    </a></p>
+                    
+                    <!-- Modal -->
+                    <div class="modal fade" id="manageModal{{voting.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Manage Grup</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            </div>
+                            <div class="modal-body">
+                            <table class="table table-condensed">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Grup Name</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for grup in grup_list %}
+                                        {% if voting.id == grup.voting.id %}
+                                        <tr>
+                                            <td>{{forloop.counter}}</td>
+                                            <td>{{grup}}</td>
+                                            <td>
+                                                <form method="post">
+                                                    {% csrf_token %}
+                                                    <a href="{% url 'e_admin:update' 'grup' grup.id %}" class="btn btn-secondary" style="padding: 0;"><i class="lnr lnr-pencil"></i></a>
+                                                    <button type="submit" class="btn btn-secondary" name="deletegroup" onclick="return confirm('hapus {{grup}}')" value="{{grup.id}}"><i class="lnr lnr-trash"></i></button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                        {% endif %}
+                                    {% endfor %}
+                                </tbody>
+                                </table>
+                            </div>
+                            <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                    <!-- End Modal -->
+                    <div class="right">
+                        <form method="post">
+                            {% csrf_token %}
+                            <button type="button" class="btn-toggle-collapse"><i class="lnr lnr-chevron-up"></i></button>
+                            <a href="{% url 'e_admin:update' 'voting' voting.id %}"><i class="lnr lnr-pencil"></i></a>
+                            <button type="submit" name="deletevoting" onclick="return confirm('hapus {{voting.namavoting}}')" value="{{voting.id}}"><i class="lnr lnr-trash"></i></button>
+                        </form>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <!-- TABBED CONTENT -->
+                    <div class="custom-tabs-line tabs-line-bottom left-aligned">
+                        <ul class="nav" role="tablist">
+                    
+                        {% for grup in grup_list %}
+                            {% if voting.id == grup.voting.id %}
+                                <li class="{% cycle 'active' ' ' ' ' ' ' ' ' ' ' %}">
+                                    <a href="#tab-bottom-left{{ forloop.counter }}" role="tab" data-toggle="tab">{{grup}}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                            {% resetcycle %}
+                        </ul>
+                    </div>
+
+                    <div class="tab-content">
+                        {% for grup in grup_list %}
+                            {% if voting.id == grup.voting.id %}
+                            <div class="tab-pane fade {% cycle 'in active' ' ' ' ' ' ' ' ' ' ' %} " id="tab-bottom-left{{forloop.counter}}">
+                                <div class="row">
+                                    <div class="panel panel-profile">
+                                        {% for kan in kandidat %}
+                                            {% if grup.id == kan.grup.pk %}
+                                            <div class="col-lg-4">
+                                                <div class="card" style="width: 30rem;">
+                                                    <img src="/media/{{kan.foto}}" width="100%" height="300" class="card-img-top rounded" alt="Avatar">
+                                                    <div class="card-body">
+                                                        <h3 class="card-title">nama kamu{{kan.nama}}</h3>
+                                                        <p class="card-text">{{kan.deskripsi}}</p>
+                                                    </div>
+                                                    <div class="card-footer">
+                                                        <a href="{% url 'e_admin:update' 'kandidat' kan.id %}" class="btn btn-info btn-block">Edit</a>
+                                                        <form method="post">
+                                                            {% csrf_token %}
+                                                            <input type="hidden" name="pk" value="{{kan.pk}}">
+                                                            <button type="submit" name="delete" class="btn btn-danger btn-block" onclick="return confirm('anda yakin?')">Delete</button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                        {% endfor %}    
+                            {% resetcycle %}
+                    </div>
+                    <!-- END TABBED CONTENT -->
+                </div>
+   
+            </div>
+            
+                
+                    
+
+        <!-- END PANEL DEFAULT -->
+    {% endfor %}
+        
+
+{% endblock content %}
+    

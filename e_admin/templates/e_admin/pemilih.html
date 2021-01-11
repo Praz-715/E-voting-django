@@ -1,0 +1,237 @@
+{% extends 'base.html' %}
+
+
+{% block title %}
+    Pemilih
+{% endblock title %}
+    
+
+{% block content-body %}
+    <div class="panel panel-headline">
+        <div class="panel-heading">
+            <div class="panel-title">E-Voting | Voters</div>
+            <div class="panel-subtitle">Periode : 2019-2020</div>
+        </div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-8">
+                <!-- Button trigger modal -->
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#managemodal">
+                    <i class="fa fa-plus-square"></i>Tambah atau Delete
+                </button>
+                
+                <!-- Modal -->
+                <div class="modal fade" id="managemodal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-scrollable">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Tambah</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <!-- TABBED CONTENT -->
+                                <div class="custom-tabs-line tabs-line-bottom left-aligned">
+                                    <ul class="nav" role="tablist">
+                                        <li class="active"><a href="#tab-create1" role="tab" data-toggle="tab">Tambah</a></li>
+                                        <li><a href="#tab-create2" role="tab" data-toggle="tab">Delete</a></li>
+                                    </ul>
+                                </div>
+                                <div class="tab-content">
+                                    <div class="tab-pane fade in active" id="tab-create1">
+                                        <form method="post">
+                                            {% csrf_token %}
+                                            <div class="form-group">
+                                                <label for="voter">Jumlah pemilih</label>
+                                                <input type="number" name="jumlahvoter" id="voter" min="0" max="1000" maxlength="1000">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="untukvoting">Untuk Voting</label>
+                                                <select name="voting" class="form-control" id="untukvoting">
+                                                    {% for voting in voting_list %}
+                                                        {% if not voting.pilihanumum %}
+                                                            <option value="{{voting.id}}">{{voting.namavoting}}</option>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                <button type="submit" name="createvoters" class="btn btn-primary">Save changes</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="tab-pane fade" id="tab-create2">
+                                        <form method="post">
+                                            {% csrf_token %}
+                                            <div class="form-group">
+                                                <label for="untukvoting">Untuk Voting</label>
+                                                <select name="voting" class="form-control" id="untukvoting">
+                                                    {% for voting in voting_list %}
+                                                        {% if not voting.pilihanumum %}
+                                                            <option value="{{voting.id}}">{{voting.namavoting}}</option>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="voter">Jumlah pemilih</label>
+                                                <input class="form-control" type="number" name="jumlahvoter" id="voter" min="0" max="1000">
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="status" id="exampleRadios1" value="SUDAH" checked>
+                                                <label class="form-check-label" for="exampleRadios1">Yang sudah memilih</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="status" id="exampleRadios2" value="BELUM">
+                                                <label class="form-check-label" for="exampleRadios2">Yang belum memilih</label>
+                                            </div>
+                                           
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                <button type="submit" name="deletevoters" class="btn btn-primary">Delete Pemilih</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                                <!-- END TABBED CONTENT -->
+                            </div>
+                            <!-- <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary">Save changes</button>
+                            </div> -->
+                        </div>
+                    </div>
+                </div>
+                <!-- End Modal -->                
+                <a href="" class="btn btn-success my-3" target="_blank">EXPORT EXCEL</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    
+    {% for voting in voting_list %}
+        <!-- PANEL HEADLINE -->
+            <div class="panel panel-headline">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        {{voting.namavoting}}
+                        
+                        {% if voting.pilihanumum %}
+                            (umum)
+                        {% else %}
+                            (token)
+                        {% endif %}
+                            
+                    </h3>
+                    <p>{{voting.deskripsi}}
+                    <!-- Button trigger modal -->
+                    <a class="btn btn-secondary" data-toggle="modal" data-target="#manageModal{{voting.id}}">
+                        Manage
+                    </a></p>
+                    
+                    <!-- Modal -->
+                    <div class="modal fade" id="manageModal{{voting.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Manage Grup</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            </div>
+                            <div class="modal-body">
+                                <form method="POST">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="votinger" value="{{voting.id}}">
+                                    <div class="form-group">
+                                        <label for="{{formvoting.batas.id_for_label}}">Batas Pemilih (...) grup</label>
+                                        <select name="{{formvoting.batas.name}}" class="form-control" id="{{form.batas.id_for_label}}}">
+                                            {% for i in grup_count %}
+                                            <option value="{{i}}" 
+                                            {% if i == voting.batas %}
+                                                selected
+                                            {% endif %}
+                                                >{{i}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="custom-control custom-switch">
+                                        <input name="{{formvoting.pilihanumum.name}}" type="checkbox" {% if voting.pilihanumum %} checked {% endif %} class="custom-control-input" id="customSwitch1">
+                                        <label class="custom-control-label" for="customSwitch1">check untuk umum</label>
+                                    </div>
+                                
+
+                            </div>
+                            <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" name="updatepemilih" class="btn btn-secondary">Save Change</button>
+                            </form>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                    <!-- End Modal -->
+                    <div class="right">
+                        <button type="button" class="btn-toggle-collapse"><i class="lnr lnr-chevron-up"></i></button>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="row" style="margin-top:10px;">
+                        <div class="col-md-12">
+                            <div class="table-responsive">
+                                {% if pemilih %}
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                        <th>#</th>
+                                        <th>Token</th>
+                                        <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for voter in pemilih %}
+                                        <tr>
+                                            <td width="10%">{{forloop.counter}}</td>
+                                            <td>{{voter.token}}</td>
+                                            <td>{{voter.status}}</td>
+                                        </tr> 
+                                        {% endfor %}	 
+                                            
+                                        </tbody>
+                                </table>
+                                {% else %}
+                                    <h1>pemilih kosong</h1>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+                
+        <!-- END PANEL DEFAULT -->
+    {% endfor %}
+
+
+{% endblock content-body %}
+
+
+{% block script %}
+{% load static %}
+    <script src="{% static 'klorofil/datatables/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'klorofil/datatables/jquery.bootstrap4.min.js' %}"></script>
+    <script src="{% static 'klorofil/datatables/datatables-demo.js' %}"></script>
+{% endblock script %}
+    
+
+
+{% block content %}
+    <br>
+{% endblock content %}
+
+    
+    
+    
